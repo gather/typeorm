@@ -2074,6 +2074,7 @@ export class SelectQueryBuilder<Entity> extends QueryBuilder<Entity> implements 
             const relationAlias = relation.inverseEntityMetadata.targetName;
 
             const queryBuilder = this.createQueryBuilder()
+                .setQueryRunner(queryRunner)
                 .select(relationAlias)
                 .from(relationTarget, relationAlias)
                 .setFindOptions({
