@@ -538,10 +538,12 @@ export class PostgresQueryRunner extends BaseQueryRunner implements QueryRunner 
         if (column.isUnique) {
             const uniqueConstraint = new TableUnique({
                 name: this.connection.namingStrategy.uniqueConstraintName(table.name, [column.name]),
-                columnNames: [column.name]
+                columnNames: [column.name],
+                deferrable: column.deferrable
             });
+            const deferrable = uniqueConstraint.deferrable ? ` DEFERRABLE ${uniqueConstraint.deferrable}` : "";
             clonedTable.uniques.push(uniqueConstraint);
-            upQueries.push(new Query(`ALTER TABLE ${this.escapePath(table)} ADD CONSTRAINT "${uniqueConstraint.name}" UNIQUE ("${column.name}")`));
+            upQueries.push(new Query(`ALTER TABLE ${this.escapePath(table)} ADD CONSTRAINT "${uniqueConstraint.name}" UNIQUE ("${column.name}")${deferrable}`));
             downQueries.push(new Query(`ALTER TABLE ${this.escapePath(table)} DROP CONSTRAINT "${uniqueConstraint.name}"`));
         }
 
@@ -809,10 +811,12 @@ export class PostgresQueryRunner extends BaseQueryRunner implements QueryRunner 
                 if (newColumn.isUnique === true) {
                     const uniqueConstraint = new TableUnique({
                         name: this.connection.namingStrategy.uniqueConstraintName(table.name, [newColumn.name]),
-                        columnNames: [newColumn.name]
+                        columnNames: [newColumn.name],
+                        deferrable: newColumn.deferrable
                     });
                     clonedTable.uniques.push(uniqueConstraint);
-                    upQueries.push(new Query(`ALTER TABLE ${this.escapePath(table)} ADD CONSTRAINT "${uniqueConstraint.name}" UNIQUE ("${newColumn.name}")`));
+                    const deferrable = uniqueConstraint.deferrable ? ` DEFERRABLE ${uniqueConstraint.deferrable}` : "";
+                    upQueries.push(new Query(`ALTER TABLE ${this.escapePath(table)} ADD CONSTRAINT "${uniqueConstraint.name}" UNIQUE ("${newColumn.name}")${deferrable}`));
                     downQueries.push(new Query(`ALTER TABLE ${this.escapePath(table)} DROP CONSTRAINT "${uniqueConstraint.name}"`));
 
                 } else {
@@ -820,8 +824,15 @@ export class PostgresQueryRunner extends BaseQueryRunner implements QueryRunner 
                         return unique.columnNames.length === 1 && !!unique.columnNames.find(columnName => columnName === newColumn.name);
                     });
                     clonedTable.uniques.splice(clonedTable.uniques.indexOf(uniqueConstraint!), 1);
+
+                    let deferrable = "";
+
+                    if (uniqueConstraint && uniqueConstraint.deferrable) {
+                        deferrable = ` DEFERRABLE ${uniqueConstraint.deferrable}`;
+                    }
+
                     upQueries.push(new Query(`ALTER TABLE ${this.escapePath(table)} DROP CONSTRAINT "${uniqueConstraint!.name}"`));
-                    downQueries.push(new Query(`ALTER TABLE ${this.escapePath(table)} ADD CONSTRAINT "${uniqueConstraint!.name}" UNIQUE ("${newColumn.name}")`));
+                    downQueries.push(new Query(`ALTER TABLE ${this.escapePath(table)} ADD CONSTRAINT "${uniqueConstraint!.name}" UNIQUE ("${newColumn.name}")${deferrable}`));
                 }
             }
 
@@ -1667,7 +1678,8 @@ export class PostgresQueryRunner extends BaseQueryRunner implements QueryRunner 
                 if (!isUniqueExist)
                     table.uniques.push(new TableUnique({
                         name: this.connection.namingStrategy.uniqueConstraintName(table.name, [column.name]),
-                        columnNames: [column.name]
+                        columnNames: [column.name],
+                        deferrable: column.deferrable
                     }));
             });
 
@@ -1675,7 +1687,8 @@ export class PostgresQueryRunner extends BaseQueryRunner implements QueryRunner 
             const uniquesSql = table.uniques.map(unique => {
                 const uniqueName = unique.name ? unique.name : this.connection.namingStrategy.uniqueConstraintName(table.name, unique.columnNames);
                 const columnNames = unique.columnNames.map(columnName => `"${columnName}"`).join(", ");
-                return `CONSTRAINT "${uniqueName}" UNIQUE (${columnNames})`;
+                const deferrable = unique.deferrable ? ` DEFERRABLE ${unique.deferrable}` : "";
+                return `CONSTRAINT "${uniqueName}" UNIQUE (${columnNames})${deferrable}`;
             }).join(", ");
 
             sql += `, ${uniquesSql}`;
@@ -1893,7 +1906,8 @@ export class PostgresQueryRunner extends BaseQueryRunner implements QueryRunner 
      */
     protected createUniqueConstraintSql(table: Table, uniqueConstraint: TableUnique): Query {
         const columnNames = uniqueConstraint.columnNames.map(column => `"` + column + `"`).join(", ");
-        return new Query(`ALTER TABLE ${this.escapePath(table)} ADD CONSTRAINT "${uniqueConstraint.name}" UNIQUE (${columnNames})`);
+        const deferrable = uniqueConstraint.deferrable ? ` DEFERRABLE ${uniqueConstraint.deferrable}` : "";
+        return new Query(`ALTER TABLE ${this.escapePath(table)} ADD CONSTRAINT "${uniqueConstraint.name}" UNIQUE (${columnNames})${deferrable}`);
     }
 
     /**

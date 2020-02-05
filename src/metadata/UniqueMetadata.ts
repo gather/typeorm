@@ -1,14 +1,14 @@
-import {EmbeddedMetadata} from "./EmbeddedMetadata";
-import {EntityMetadata} from "./EntityMetadata";
-import {NamingStrategyInterface} from "../naming-strategy/NamingStrategyInterface";
-import {ColumnMetadata} from "./ColumnMetadata";
-import {UniqueMetadataArgs} from "../metadata-args/UniqueMetadataArgs";
+import { EmbeddedMetadata } from "./EmbeddedMetadata";
+import { EntityMetadata } from "./EntityMetadata";
+import { NamingStrategyInterface } from "../naming-strategy/NamingStrategyInterface";
+import { ColumnMetadata } from "./ColumnMetadata";
+import { UniqueMetadataArgs } from "../metadata-args/UniqueMetadataArgs";
+import { DeferrableType } from "./types/DeferrableType";
 
 /**
  * Unique metadata contains all information about table's unique constraints.
  */
 export class UniqueMetadata {
-
     // ---------------------------------------------------------------------
     // Public Properties
     // ---------------------------------------------------------------------
@@ -56,25 +56,30 @@ export class UniqueMetadata {
      */
     columnNamesWithOrderingMap: { [key: string]: number } = {};
 
+    /**
+     * Indicate if foreign key constraints can be deferred.
+     */
+    deferrable?: DeferrableType;
+
     // ---------------------------------------------------------------------
     // Constructor
     // ---------------------------------------------------------------------
 
     constructor(options: {
-        entityMetadata: EntityMetadata,
-        embeddedMetadata?: EmbeddedMetadata,
-        columns?: ColumnMetadata[],
-        args?: UniqueMetadataArgs
+        entityMetadata: EntityMetadata;
+        embeddedMetadata?: EmbeddedMetadata;
+        columns?: ColumnMetadata[];
+        args?: UniqueMetadataArgs;
     }) {
         this.entityMetadata = options.entityMetadata;
         this.embeddedMetadata = options.embeddedMetadata;
-        if (options.columns)
-            this.columns = options.columns;
+        if (options.columns) this.columns = options.columns;
 
         if (options.args) {
             this.target = options.args.target;
             this.givenName = options.args.name;
             this.givenColumnNames = options.args.columns;
+            this.deferrable = options.args.deferrable;
         }
     }
 

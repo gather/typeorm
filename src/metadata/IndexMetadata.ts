@@ -3,6 +3,7 @@ import {IndexMetadataArgs} from "../metadata-args/IndexMetadataArgs";
 import {NamingStrategyInterface} from "../naming-strategy/NamingStrategyInterface";
 import {ColumnMetadata} from "./ColumnMetadata";
 import {EmbeddedMetadata} from "./EmbeddedMetadata";
+import { DeferrableType } from './types/DeferrableType';
 
 /**
  * Index metadata contains all information about table's index.
@@ -102,6 +103,11 @@ export class IndexMetadata {
      */
     columnNamesWithOrderingMap: { [key: string]: number } = {};
 
+    /**
+     * Indicate if foreign key constraints can be deferred.
+     */
+    deferrable?: DeferrableType;
+
     // ---------------------------------------------------------------------
     // Constructor
     // ---------------------------------------------------------------------
@@ -130,6 +136,7 @@ export class IndexMetadata {
             this.expireAfterSeconds = options.args.expireAfterSeconds;
             this.givenName = options.args.name;
             this.givenColumnNames = options.args.columns;
+            this.deferrable = options.args.deferrable;
         }
     }
 

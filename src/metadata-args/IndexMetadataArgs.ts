@@ -1,3 +1,5 @@
+import { DeferrableType } from '../metadata/types/DeferrableType';
+
 /**
  * Arguments for IndexMetadata class.
  */
@@ -63,4 +65,9 @@ export interface IndexMetadataArgs {
      * This option is only supported for mongodb database.
      */
     expireAfterSeconds?: number;
+
+    /**
+     * Indicate if foreign key constraints can be deferred.
+     */
+    deferrable?: DeferrableType;
 }

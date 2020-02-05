@@ -1,9 +1,9 @@
+import { DeferrableType } from "../../metadata/types/DeferrableType";
 
 /**
  * Table's column options.
  */
 export interface TableColumnOptions {
-
     // -------------------------------------------------------------------------
     // Public Properties
     // -------------------------------------------------------------------------
@@ -132,4 +132,9 @@ export interface TableColumnOptions {
      * SRID (Spatial Reference ID (EPSG code))
      */
     srid?: number;
+
+    /**
+     * DEFERRABLE type to be used to specify if foreign key constraints can be deferred.
+     */
+    deferrable?: DeferrableType;
 }
