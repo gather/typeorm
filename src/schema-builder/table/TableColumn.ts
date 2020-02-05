@@ -1,10 +1,10 @@
-import {TableColumnOptions} from "../options/TableColumnOptions";
+import { TableColumnOptions } from "../options/TableColumnOptions";
+import { DeferrableType } from "../../metadata/types/DeferrableType";
 
 /**
  * Table's columns in the database represented in this class.
  */
 export class TableColumn {
-
     // -------------------------------------------------------------------------
     // Public Properties
     // -------------------------------------------------------------------------
@@ -135,6 +135,11 @@ export class TableColumn {
      */
     srid?: number;
 
+    /**
+     * DEFERRABLE type to be used to specify if foreign key constraints can be deferred.
+     */
+    deferrable?: DeferrableType;
+
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
@@ -165,6 +170,7 @@ export class TableColumn {
             this.generatedType = options.generatedType;
             this.spatialFeatureType = options.spatialFeatureType;
             this.srid = options.srid;
+            this.deferrable = options.deferrable;
         }
     }
 
@@ -200,8 +206,8 @@ export class TableColumn {
             isArray: this.isArray,
             comment: this.comment,
             spatialFeatureType: this.spatialFeatureType,
-            srid: this.srid
+            srid: this.srid,
+            deferrable: this.deferrable
         });
     }
-
 }

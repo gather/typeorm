@@ -11,6 +11,7 @@ import {MongoDriver} from "../driver/mongodb/MongoDriver";
 import {PromiseUtils} from "../util/PromiseUtils";
 import {FindOperator} from "../find-options/FindOperator";
 import {ApplyValueTransformers} from "../util/ApplyValueTransformers";
+import { DeferrableType } from './types/DeferrableType';
 
 /**
  * This metadata contains all information about entity's column.
@@ -297,6 +298,11 @@ export class ColumnMetadata {
      */
     srid?: number;
 
+    /**
+     * Indicate if foreign key constraints can be deferred.
+     */
+    deferrable?: DeferrableType;
+
     // ---------------------------------------------------------------------
     // Constructor
     // ---------------------------------------------------------------------
@@ -311,6 +317,7 @@ export class ColumnMetadata {
         nestedSetLeft?: boolean,
         nestedSetRight?: boolean,
         materializedPath?: boolean,
+        deferrable?: DeferrableType
     }) {
         this.entityMetadata = options.entityMetadata;
         this.embeddedMetadata = options.embeddedMetadata!;
@@ -421,6 +428,7 @@ export class ColumnMetadata {
             this.isNestedSetRight = options.nestedSetRight;
         if (options.materializedPath)
             this.isMaterializedPath = options.materializedPath;
+        if (options.deferrable) this.deferrable = options.deferrable;
     }
 
     // ---------------------------------------------------------------------

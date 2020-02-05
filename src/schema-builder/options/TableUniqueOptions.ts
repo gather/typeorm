@@ -1,8 +1,9 @@
+import { DeferrableType } from "../../metadata/types/DeferrableType";
+
 /**
  * Database's table unique constraint options.
  */
 export interface TableUniqueOptions {
-
     // -------------------------------------------------------------------------
     // Public Properties
     // -------------------------------------------------------------------------
@@ -17,4 +18,8 @@ export interface TableUniqueOptions {
      */
     columnNames: string[];
 
+    /**
+     * DEFERRABLE type to be used to specify if foreign key constraints can be deferred.
+     */
+    deferrable?: DeferrableType;
 }

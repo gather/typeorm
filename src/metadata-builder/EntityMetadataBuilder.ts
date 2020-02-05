@@ -508,6 +508,7 @@ export class EntityMetadataBuilder {
                             target: args.target,
                             name: args.name,
                             columns: args.columns,
+                            deferrable: args.deferrable
                         }
                     });
                 });

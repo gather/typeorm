@@ -72,6 +72,7 @@ export * from "./decorator/tree/TreeChildren";
 export * from "./decorator/tree/Tree";
 export * from "./decorator/Index";
 export * from "./decorator/Unique";
+export * from "./decorator/DeferrableUnique";
 export * from "./decorator/Check";
 export * from "./decorator/Exclusion";
 export * from "./decorator/Generated";
